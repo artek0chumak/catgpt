@@ -31,6 +31,7 @@ openai_api_key:
 openai_api_model_embedder: text-embedding-3-large
 openai_api_model_generator: gpt-4-turbo-preview
 password:
+root_path:
 ```
 
-`tp_api_*` можно получить [тут](https://my.telegram.org/). Для ключа OpenAI надо идти в [сюда](https://platform.openai.com). Пароль пишите посложнее.
+`tp_api_*` можно получить [тут](https://my.telegram.org/). Для ключа OpenAI надо идти в [сюда](https://platform.openai.com). Пароль пишите посложнее. `root_path` для запуска Gradio за nginx (см. [эту статью](https://www.gradio.app/guides/running-gradio-on-your-web-server-with-nginx))

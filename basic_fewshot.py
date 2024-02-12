@@ -76,4 +76,4 @@ with gr.Blocks() as demo:
     message_btn.click(fn=find_few_shots, inputs=[query, password, api_key], outputs=message,)
 
 
-demo.launch()
+demo.launch(root_path=config["root_path"])
