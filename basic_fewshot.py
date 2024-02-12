@@ -1,9 +1,9 @@
+import json
 import re
 import yaml
 
 import gradio as gr
 import numpy as np
-import pandas as pd
 
 from openai import OpenAI
 
@@ -11,8 +11,16 @@ from openai import OpenAI
 with open("config.yaml", encoding="utf-8") as config_file:
     config = yaml.safe_load(config_file)
 
-dataset = pd.read_json("embedded.jsonl", lines=True)
-embeds = np.array([np.array(v) for v in dataset["embedding"].values])
+messages = []
+embeds = []
+with open("embedded.jsonl") as embedding_file:
+    for line in embedding_file:
+        row = json.loads(line)
+        messages.append(row["message"])
+        embeds.append(np.array(row["embedding"], dtype=np.float16))
+
+messages = np.array(messages)
+embeds = np.array(embeds, dtype=np.float16)
 
 
 def find_few_shots(query, password, api_key="", k=5, model=config["openai_api_model_embedder"]):
@@ -28,7 +36,7 @@ def find_few_shots(query, password, api_key="", k=5, model=config["openai_api_mo
     query_embed = np.array(client.embeddings.create(input = [query], model=model).data[0].embedding)
     dist = ((embeds - query_embed)** 2).sum(axis=0)
     idx = np.argsort(dist)[:k]
-    examples = [r["message"] for r in dataset.iloc[idx].iloc]
+    examples = messages[idx]
     examples = "\n\n".join(examples)
     prompt = (
         f"Напиши сообщение в чат, используя сообщения ниже как примеры как надо писать:\n{examples}\n"
